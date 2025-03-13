@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Exchange Picker</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        select, button { font-size: 18px; padding: 10px; margin: 10px; }
+        #result { font-size: 20px; font-weight: bold; margin-top: 20px; display: none; }
+    </style>
+</head>
+<body>
+    <h1>Gift Exchange Picker</h1>
+    <label for="namePicker">Select Your Name:</label>
+    <select id="namePicker">
+        <option value="">--Choose--</option>
+    </select>
+    <button onclick="pickGiftReceiver()">Find Recipient</button>
+    <div id="result"></div>
+
+    <script>
+        const giftExchange = {
+            "Fatima": "Kaunain",
+            "Inshah": "Rahila",
+            "Simeen": "Preeti",
+            "Sakina": "Zoha",
+            "Saniya": "Reva",
+            "Kaunain":"Fatima"
+        };
+
+        const namePicker = document.getElementById("namePicker");
+        const resultDiv = document.getElementById("result");
+        const button = document.querySelector("button");
+
+        // Populate dropdown
+        Object.keys(giftExchange).forEach(name => {
+            let option = document.createElement("option");
+            option.value = name;
+            option.textContent = name;
+            namePicker.appendChild(option);
+        });
+
+        function pickGiftReceiver() {
+            const selectedName = namePicker.value;
+            if (selectedName && giftExchange[selectedName]) {
+                resultDiv.textContent = `Your recipient is: ${giftExchange[selectedName]}`;
+                resultDiv.style.display = "block"; // Show the result
+                
+                // Disable further selections
+                namePicker.disabled = true;
+                button.disabled = true;
+            } else {
+                resultDiv.textContent = "Please select a valid name.";
+                resultDiv.style.display = "block"; // Show error
+            }
+        }
+    </script>
+</body>
+</html>
+

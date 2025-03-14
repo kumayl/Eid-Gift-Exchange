@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Exchange Picker</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        select, button, input { font-size: 18px; padding: 10px; margin: 10px; }
+        #result, #wishlistDisplay { font-size: 20px; font-weight: bold; margin-top: 20px; display: none; }
+    </style>
+</head>
+<body>
+    <h1>Gift Exchange Picker</h1>
+    <label for="namePicker">Select Your Name:</label>
+    <select id="namePicker">
+        <option value="">--Choose--</option>
+    </select>
+    <button onclick="pickGiftReceiver()">Find Recipient</button>
+    <div id="result"></div>
+    
+    <h2>Add Wishlist</h2>
+    <input type="text" id="wishlistInput" placeholder="Enter wishlist item">
+    <button onclick="addWishlist()">Add</button>
+    <h3>Recipient's Wishlist</h3>
+    <div id="wishlistDisplay"></div>
+
+    <script>
+        const giftExchange = {
+            "Fatima": "Kaunain",
+            "Inshah": "Rahila",
+            "Simeen": "Preeti",
+            "Sakina": "Zoha",
+            "Saniya": "Reva",
+            "Kaunain": "Fatima"
+        };
+
+        const wishlists = {};
+
+        const namePicker = document.getElementById("namePicker");
+        const resultDiv = document.getElementById("result");
+        const wishlistInput = document.getElementById("wishlistInput");
+        const wishlistDisplay = document.getElementById("wishlistDisplay");
+        const button = document.querySelector("button");
+
+        // Populate dropdown
+        Object.keys(giftExchange).forEach(name => {
+            let option = document.createElement("option");
+            option.value = name;
+            option.textContent = name;
+            namePicker.appendChild(option);
+        });
+
+        function pickGiftReceiver() {
+            const selectedName = namePicker.value;
+            if (selectedName && giftExchange[selectedName]) {
+                const recipient = giftExchange[selectedName];
+                resultDiv.textContent = `Your recipient is: ${recipient}`;
+                resultDiv.style.display = "block";
+
+                // Show recipient's wishlist
+                setTimeout(() => showWishlist(recipient), 100);
+                
+                // Disable further selections
+                namePicker.disabled = true;
+                button.disabled = true;
+            } else {
+                resultDiv.textContent = "Please select a valid name.";
+                resultDiv.style.display = "block";
+            }
+        }
+
+        function addWishlist() {
+            const selectedName = namePicker.value;
+            const wishlistItem = wishlistInput.value.trim();
+            if (selectedName && wishlistItem) {
+                if (!wishlists[selectedName]) {
+                    wishlists[selectedName] = [];
+                }
+                wishlists[selectedName].push(wishlistItem);
+                wishlistInput.value = "";
+                alert("Wishlist item added!");
+                
+                // Show updated wishlist if recipient already selected
+                if (resultDiv.style.display === "block") {
+                    showWishlist(giftExchange[selectedName]);
+                }
+            }
+        }
+
+        function showWishlist(name) {
+            if (wishlists[name] && wishlists[name].length > 0) {
+                wishlistDisplay.innerHTML = `Wishlist: ${wishlists[name].join(", ")}`;
+            } else {
+                wishlistDisplay.innerHTML = "No wishlist items added.";
+            }
+            wishlistDisplay.style.display = "block";
+        }
+    </script>
+</body>
+</html>

@@ -60,7 +60,8 @@
 
         async function loadWishlists() {
             try {
-                const response = await fetch('wishlists.json');
+                const response = await fetch('./wishlists.json');  // Ensure correct path
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 wishlists = await response.json();
             } catch (error) {
                 console.error("Failed to load wishlists:", error);

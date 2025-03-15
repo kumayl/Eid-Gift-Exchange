@@ -22,6 +22,7 @@
     <h2>Add Wishlist</h2>
     <input type="text" id="wishlistInput" placeholder="Enter wishlist item">
     <button onclick="addWishlist()">Add</button>
+    
     <h3>Your Wishlist</h3>
     <div id="ownWishlistDisplay"></div>
     <h3>Recipient's Wishlist</h3>
@@ -54,16 +55,28 @@
         const wishlistInput = document.getElementById("wishlistInput");
         const wishlistDisplay = document.getElementById("wishlistDisplay");
         const ownWishlistDisplay = document.getElementById("ownWishlistDisplay");
-        const button = document.querySelector("button");
 
-        let wishlists = JSON.parse(localStorage.getItem("wishlists")) || {};
+        let wishlists = {};
 
-        Object.keys(giftExchange).forEach(name => {
-            let option = document.createElement("option");
-            option.value = name;
-            option.textContent = name;
-            namePicker.appendChild(option);
-        });
+        async function loadWishlists() {
+            try {
+                const response = await fetch('wishlists.json');
+                wishlists = await response.json();
+            } catch (error) {
+                console.error("Failed to load wishlists:", error);
+                wishlists = {};
+            }
+        }
+
+        async function init() {
+            await loadWishlists();
+            Object.keys(giftExchange).forEach(name => {
+                let option = document.createElement("option");
+                option.value = name;
+                option.textContent = name;
+                namePicker.appendChild(option);
+            });
+        }
 
         function pickGiftReceiver() {
             const selectedName = namePicker.value;
@@ -73,7 +86,6 @@
                 resultDiv.style.display = "block";
                 setTimeout(() => showWishlist(recipient), 100);
                 namePicker.disabled = true;
-                button.disabled = true;
             } else {
                 resultDiv.textContent = "Please select a valid name.";
                 resultDiv.style.display = "block";
@@ -88,9 +100,9 @@
                     wishlists[selectedName] = [];
                 }
                 wishlists[selectedName].push(wishlistItem);
-                localStorage.setItem("wishlists", JSON.stringify(wishlists));
+                console.log("Wishlist Updated:", JSON.stringify(wishlists, null, 2));
+                alert("Wishlist updated! (Check Console)");
                 wishlistInput.value = "";
-                alert("Wishlist item added!");
                 showOwnWishlist(selectedName);
                 if (resultDiv.style.display === "block") {
                     showWishlist(giftExchange[selectedName]);
@@ -99,16 +111,16 @@
         }
 
         function showWishlist(name) {
-            wishlists = JSON.parse(localStorage.getItem("wishlists")) || {};
             wishlistDisplay.innerHTML = wishlists[name] && wishlists[name].length > 0 ? `Wishlist: ${wishlists[name].join(", ")}` : "No wishlist items added.";
             wishlistDisplay.style.display = "block";
         }
 
         function showOwnWishlist(name) {
-            wishlists = JSON.parse(localStorage.getItem("wishlists")) || {};
             ownWishlistDisplay.innerHTML = wishlists[name] && wishlists[name].length > 0 ? `Your Wishlist: ${wishlists[name].join(", ")}` : "No wishlist items added.";
             ownWishlistDisplay.style.display = "block";
         }
+
+        init();
     </script>
 </body>
 </html>
